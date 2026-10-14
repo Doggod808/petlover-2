@@ -1,0 +1,15 @@
+{
+  "name": "pixel-petshed",
+  "version": "1.0.0",
+  "private": true,
+  "description": "像素宠舍：注册账号、手绘像素宠物、每日口粮、和宠物对话。本机跑 server.js，Vercel 跑 api/*.js（数据放 Redis）",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "smoke": "node tools/smoke.mjs",
+    "dev": "node server.js"
+  },
+  "dependencies": {},
+  "engines": { "node": "22.x" },
+  "license": "MIT"
+}

@@ -1,0 +1,589 @@
+/* ====================== 应用页：玻璃缸 / 食物袋 / 对话 / 画板 ====================== */
+
+.label {
+  font-size: var(--t-12);
+  color: var(--ink-2);
+  margin-bottom: 10px;
+}
+
+.panel {
+  border: 2px solid var(--ink);
+  background: var(--paper-2);
+  padding: 14px;
+}
+
+.panel + .panel {
+  margin-top: 18px;
+}
+
+.thumb {
+  image-rendering: pixelated;
+  display: block;
+}
+
+.thumb--food {
+  background: transparent;
+}
+
+/* ------------------------------- 玻璃缸页 ------------------------------- */
+
+.den {
+  padding: clamp(20px, 3vw, 34px) 0 44px;
+}
+
+.den__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(280px, 4fr);
+  gap: 26px;
+  align-items: start;
+}
+
+.den__hello {
+  font-size: var(--t-14);
+  color: var(--ink-2);
+  margin-bottom: 14px;
+}
+
+.den__stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.den__body {
+  width: 100%;
+}
+
+.den__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+  justify-content: center;
+}
+
+.meter + .meter {
+  margin-top: 12px;
+}
+
+.meter__head {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--t-12);
+  color: var(--ink-2);
+  margin-bottom: 4px;
+}
+
+.meter__track {
+  border: 2px solid var(--ink);
+  background: #fff;
+  height: 16px;
+}
+
+.meter__fill {
+  height: 100%;
+  transition: width 260ms steps(6, end);
+}
+
+.meter__fill--hunger {
+  background: repeating-linear-gradient(90deg, var(--sun) 0 6px, #ffd166 6px 12px);
+}
+
+.meter__fill--love {
+  background: repeating-linear-gradient(90deg, var(--berry) 0 6px, #f4a3b6 6px 12px);
+}
+
+.facts {
+  margin: 16px 0 0;
+  border-top: 2px solid var(--line);
+}
+
+.facts > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 2px solid var(--line);
+  padding: 7px 0;
+  font-size: var(--t-14);
+}
+
+.facts dt {
+  color: var(--ink-3);
+}
+
+.facts dd {
+  margin: 0;
+}
+
+.quickfood {
+  border: 2px solid var(--ink);
+  background: var(--paper-2);
+  padding: 14px;
+  margin-top: 18px;
+}
+
+.quickfood__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.foodchip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  border: 2px solid var(--ink);
+  background: #fff;
+  padding: 6px 8px;
+  cursor: pointer;
+  position: relative;
+  box-shadow: var(--shadow-hard-sm);
+}
+
+.foodchip:hover {
+  background: #fffdf4;
+}
+
+.foodchip:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+.foodchip__name {
+  max-width: 74px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.foodchip__stock {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: var(--sun);
+  border: 2px solid var(--ink);
+  font-size: var(--t-11);
+  padding: 0 4px;
+}
+
+.petstrip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.petstrip__item {
+  border: 2px solid var(--line);
+  background: #fff;
+  padding: 6px 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.petstrip__item:hover {
+  border-color: var(--ink);
+}
+
+/* ------------------------------- 食物袋页 ------------------------------- */
+
+.bag {
+  padding: 20px 0 44px;
+}
+
+.bag__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+  gap: 22px;
+  margin-top: 24px;
+  align-items: start;
+}
+
+.bag__hint {
+  margin-top: 14px;
+}
+
+.bag__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.foodcard {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 2px solid var(--line);
+  background: #fff;
+  padding: 10px 12px;
+}
+
+.foodcard__meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.foodcard__name {
+  font-size: var(--t-16);
+}
+
+.foodcard__ops {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* -------------------------------- 对话页 -------------------------------- */
+
+.talk {
+  padding: 20px 0 44px;
+}
+
+.talk__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(260px, 4fr);
+  gap: 24px;
+  align-items: start;
+  margin-top: 18px;
+}
+
+.chat__pet {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.chat__pet-name {
+  font-weight: 700;
+}
+
+.chatlog {
+  border: 2px solid var(--ink);
+  background: var(--paper-2);
+  padding: 16px;
+  height: min(48vh, 420px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  scroll-behavior: smooth;
+}
+
+.bubble {
+  max-width: 78%;
+  border: 2px solid var(--ink);
+  background: #fff;
+  padding: 8px 11px;
+  box-shadow: var(--shadow-hard-sm);
+}
+
+.bubble--pet {
+  align-self: flex-start;
+}
+
+.bubble--me {
+  align-self: flex-end;
+  background: #eaf6fb;
+}
+
+.bubble__text {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.bubble__time {
+  display: block;
+  margin-top: 3px;
+  color: var(--ink-3);
+}
+
+.chat__composer {
+  margin-top: 14px;
+  border: 2px solid var(--ink);
+  background: var(--paper-2);
+  padding: 12px;
+}
+
+.chat__input {
+  resize: vertical;
+  min-height: 56px;
+}
+
+.chat__composer-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.chat__quick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.chip {
+  border: 2px solid var(--ink);
+  background: var(--paper-2);
+  padding: 4px 10px;
+  font-size: var(--t-12);
+  cursor: pointer;
+}
+
+.chip:hover {
+  background: #fff;
+}
+
+.chip[aria-pressed='true'] {
+  background: var(--ink);
+  color: var(--paper-2);
+}
+
+/* -------------------------------- 画板页 -------------------------------- */
+
+.draw {
+  padding: 20px 0 44px;
+}
+
+.draw__toolbar {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 20px;
+  align-items: end;
+  margin: 22px 0 18px;
+}
+
+.draw__field--grow {
+  min-width: 0;
+}
+
+.sizer {
+  display: flex;
+  gap: 6px;
+}
+
+.studio {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(230px, 300px);
+  gap: 20px;
+  align-items: start;
+}
+
+.studio__bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  border: 2px solid var(--ink);
+  border-bottom: 0;
+  background: var(--paper-2);
+  padding: 8px;
+}
+
+.studio__bar .spacer {
+  flex: 1;
+}
+
+.tool {
+  border: 2px solid transparent;
+  background: transparent;
+  padding: 4px 10px;
+  font-size: var(--t-14);
+  cursor: pointer;
+}
+
+.tool:hover {
+  border-color: var(--line);
+  background: #fff;
+}
+
+.tool[aria-pressed='true'] {
+  border-color: var(--ink);
+  background: var(--paper-3);
+  font-weight: 600;
+}
+
+.tool:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.tool--danger:hover {
+  border-color: var(--berry);
+  color: var(--berry-d);
+}
+
+.pad__frame {
+  border: 2px solid var(--ink);
+  background-image: repeating-conic-gradient(var(--paper-3) 0% 25%, var(--paper-2) 0% 50%);
+  background-size: 16px 16px;
+  padding: 18px;
+  overflow: auto;
+  max-height: 62vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.pad {
+  position: relative;
+  line-height: 0;
+  outline: 2px solid var(--ink);
+  background-image: repeating-conic-gradient(#e6ecec 0% 25%, #fbfdfd 0% 50%);
+  background-size: 8px 8px;
+}
+
+.pad__canvas {
+  image-rendering: pixelated;
+  display: block;
+  cursor: crosshair;
+  touch-action: none;
+  background: transparent;
+}
+
+.pad__grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.pad--grid .pad__grid {
+  background-image: repeating-linear-gradient(to right, rgba(19, 26, 33, 0.16) 0 1px, transparent 1px var(--zoom)),
+    repeating-linear-gradient(to bottom, rgba(19, 26, 33, 0.16) 0 1px, transparent 1px var(--zoom));
+}
+
+.studio__under {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.zoom {
+  flex: 0 1 220px;
+  accent-color: var(--berry);
+}
+
+.pad__stats {
+  color: var(--ink-2);
+  margin: 0;
+}
+
+.studio__side {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.studio__section {
+  border: 2px solid var(--ink);
+  background: var(--paper-2);
+  padding: 12px;
+}
+
+.palette {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(26px, 1fr));
+  gap: 5px;
+}
+
+.swatch {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border: 2px solid var(--ink);
+  padding: 0;
+  cursor: pointer;
+  position: relative;
+}
+
+.swatch--active {
+  outline: 3px solid var(--berry);
+  outline-offset: 1px;
+}
+
+.swatch--transparent {
+  background-image: repeating-conic-gradient(#d7e1e2 0% 25%, #fff 0% 50%);
+  background-size: 10px 10px;
+}
+
+.swatch--add {
+  display: grid;
+  place-items: center;
+  background: #fff;
+  font-size: var(--t-14);
+  cursor: pointer;
+  border-style: dashed;
+}
+
+.swatch--add input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.palette__custom {
+  margin-top: 10px;
+}
+
+.colorpick {
+  width: 100%;
+  height: 32px;
+  border: 2px solid var(--ink);
+  background: #fff;
+  padding: 2px;
+}
+
+.presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.previews {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.preview__item {
+  margin: 0;
+  text-align: center;
+}
+
+.preview {
+  image-rendering: pixelated;
+  border: 2px solid var(--ink);
+  background-image: repeating-conic-gradient(var(--paper-3) 0% 25%, #fff 0% 50%);
+  background-size: 10px 10px;
+  max-width: 140px;
+}
+
+.draw__foot {
+  margin-top: 18px;
+}
+
+@media (max-width: 980px) {
+  .den__grid,
+  .talk__grid,
+  .bag__grid,
+  .studio {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .draw__toolbar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .pad__frame {
+    max-height: none;
+  }
+}
