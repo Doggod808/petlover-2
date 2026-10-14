@@ -1,0 +1,14 @@
+# 运行时生成的数据（里面是所有账号的密码哈希、宠物和聊天记录）
+data/
+
+# 依赖与临时文件
+node_modules/
+*.log
+.env
+.env.*
+
+# 编辑器与系统垃圾
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

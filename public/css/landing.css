@@ -1,0 +1,361 @@
+/* ============================ 首页与账号页 ============================ */
+
+.skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--sun);
+  color: var(--ink);
+  padding: 8px 14px;
+  z-index: 60;
+}
+
+.skip:focus {
+  left: 8px;
+  top: 8px;
+}
+
+.brand__text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.topnav__cta {
+  border-color: var(--sun) !important;
+  background: var(--sun);
+  color: var(--night) !important;
+  font-weight: 600;
+}
+
+.topnav__who {
+  color: #9fb0be;
+  padding: 0 6px;
+}
+
+.topnav__link {
+  border: 2px solid transparent;
+  background: none;
+  color: #d6e2ea;
+  font-size: var(--t-14);
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.topnav__link:hover {
+  color: #fff;
+  border-color: #46586a;
+}
+
+/* -------------------------------- 首屏 -------------------------------- */
+
+.hero {
+  border-top: 0;
+}
+
+.hero__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: clamp(24px, 4vw, 56px);
+  align-items: center;
+  padding-top: clamp(28px, 5vw, 56px);
+  padding-bottom: clamp(28px, 5vw, 56px);
+}
+
+.kicker {
+  font-size: var(--t-12);
+  color: var(--leaf-d);
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+}
+
+.hero__title {
+  font-size: clamp(1.9rem, 4.2vw, 3.1rem);
+  letter-spacing: -0.02em;
+  text-shadow: 3px 3px 0 var(--paper-3);
+}
+
+.hero__lede {
+  margin-top: 16px;
+  max-width: 34em;
+  color: var(--ink-2);
+}
+
+.hero__actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+.specs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  margin-top: 32px;
+  border-top: 2px solid var(--ink);
+}
+
+.specs > div {
+  padding: 10px 12px 0 0;
+}
+
+.specs > div + div {
+  border-left: 2px solid var(--line);
+  padding-left: 12px;
+}
+
+.specs dt {
+  font-size: var(--t-12);
+  color: var(--ink-3);
+}
+
+.specs dd {
+  margin: 2px 0 0;
+  font-size: var(--t-14);
+}
+
+/* -------------------------------- 玻璃缸 -------------------------------- */
+
+.hero__stage {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.terrarium-host {
+  position: relative;
+  max-width: 100%;
+  border: 2px solid var(--ink);
+  box-shadow: var(--shadow-hard);
+  background: var(--sky);
+  overflow: hidden;
+  touch-action: manipulation;
+}
+
+.terrarium__scene {
+  image-rendering: pixelated;
+  display: block;
+}
+
+.terrarium__pet {
+  position: absolute;
+  image-rendering: pixelated;
+  cursor: pointer;
+  filter: drop-shadow(2px 2px 0 rgba(19, 26, 33, 0.18));
+}
+
+.stagebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  max-width: 520px;
+  border-top: 2px solid var(--ink);
+  padding-top: 10px;
+}
+
+.stagebar__line {
+  color: var(--ink-2);
+  margin: 0;
+}
+
+/* -------------------------------- 三步 -------------------------------- */
+
+.band__title {
+  font-size: clamp(1.3rem, 2.4vw, 1.7rem);
+  margin: 34px 0 22px;
+}
+
+.steps {
+  padding-bottom: 40px;
+}
+
+.steps__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 2px solid var(--ink);
+}
+
+.step {
+  padding: 22px 20px 26px 20px;
+}
+
+.step + .step {
+  border-left: 2px solid var(--line);
+}
+
+.step__art {
+  width: 96px;
+  height: 96px;
+  border: 2px solid var(--ink);
+  display: grid;
+  place-items: center;
+  background-image: repeating-conic-gradient(var(--paper-3) 0% 25%, var(--paper-2) 0% 50%);
+  background-size: 16px 16px;
+}
+
+.step__n {
+  font-size: var(--t-12);
+  color: var(--ink-3);
+  margin: 16px 0 4px;
+}
+
+.step__title {
+  font-size: var(--t-26);
+}
+
+.step__body {
+  margin-top: 8px;
+  color: var(--ink-2);
+  font-size: var(--t-14);
+  max-width: 30em;
+}
+
+/* ------------------------------- 说明区 ------------------------------- */
+
+.notes {
+  padding: 34px 0 46px;
+}
+
+.notes__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 26px;
+}
+
+.note {
+  border-top: 2px solid var(--ink);
+  padding-top: 14px;
+}
+
+.note h3 {
+  font-size: var(--t-16);
+}
+
+.note p {
+  margin-top: 8px;
+  font-size: var(--t-14);
+  color: var(--ink-2);
+}
+
+/* ------------------------------- 账号页 ------------------------------- */
+
+.auth {
+  padding: clamp(28px, 5vw, 64px) 0;
+}
+
+.auth__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 460px);
+  gap: clamp(24px, 4vw, 64px);
+  align-items: start;
+}
+
+.auth__title {
+  font-size: clamp(1.7rem, 3.4vw, 2.4rem);
+  text-shadow: 3px 3px 0 var(--paper-3);
+}
+
+.auth__lede {
+  margin-top: 14px;
+  color: var(--ink-2);
+  max-width: 30em;
+}
+
+.auth__list {
+  margin: 22px 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 2px solid var(--line);
+}
+
+.auth__list li {
+  border-bottom: 2px solid var(--line);
+  padding: 9px 0;
+}
+
+.auth__form {
+  border: 2px solid var(--ink);
+  background: var(--paper-2);
+  box-shadow: var(--shadow-hard);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth__switch {
+  color: var(--ink-2);
+}
+
+/* ------------------------------ 通用页面块 ------------------------------ */
+
+.page__title {
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+  margin-top: 30px;
+  text-shadow: 3px 3px 0 var(--paper-3);
+}
+
+.page__lede {
+  margin-top: 10px;
+  color: var(--ink-2);
+  max-width: 46em;
+}
+
+.empty {
+  border: 2px dashed var(--line);
+  background: var(--paper-2);
+  padding: 26px;
+  max-width: 560px;
+}
+
+.empty--slim {
+  padding: 16px;
+}
+
+.empty h2 {
+  font-size: var(--t-20);
+}
+
+.empty p {
+  margin-top: 8px;
+}
+
+.empty__actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 980px) {
+  .hero__grid,
+  .auth__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .steps__grid,
+  .notes__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .step + .step {
+    border-left: 0;
+    border-top: 2px solid var(--line);
+  }
+}
+
+@media (max-width: 560px) {
+  .specs {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .specs > div + div {
+    border-left: 0;
+    border-top: 2px solid var(--line);
+    padding-left: 0;
+  }
+}

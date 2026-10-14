@@ -1,0 +1,17 @@
+services:
+  petshed:
+    build: .
+    image: pixel-petshed
+    container_name: pixel-petshed
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    environment:
+      # 想把对话换成自己的模型，把下面三行的注释去掉并填好
+      # PET_AI_BASE: "https://api.deepseek.com/v1"
+      # PET_AI_KEY: "sk-xxxxxxxx"
+      # PET_AI_MODEL: "deepseek-chat"
+      TZ: "Asia/Shanghai"
+    volumes:
+      # 账号、宠物、聊天记录都在这里，删容器不删这个目录
+      - ./data:/data

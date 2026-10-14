@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>像素宠舍 · 画一只自己的像素宠物</title>
+    <meta
+      name="description"
+      content="注册一个账号，用 32、64 或 128 格像素画一只宠物：每天免费领一份口粮，自己画食物，还能和它对话。"
+    />
+    <link rel="icon" href="/brand/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/css/base.css" />
+    <link rel="stylesheet" href="/css/landing.css" />
+    <link rel="stylesheet" href="/css/app.css" />
+  </head>
+  <body>
+    <a class="skip" href="#view">跳到主要内容</a>
+    <header class="topbar">
+      <div class="wrap topbar__inner">
+        <a class="brand" href="#/">
+          <canvas class="brand__mark" width="16" height="16" aria-hidden="true"></canvas>
+          <span class="brand__text">
+            <span class="brand__name">像素宠舍</span>
+            <span class="brand__sub">PIXEL PETSHED</span>
+          </span>
+        </a>
+        <nav class="topnav" id="nav" aria-label="主导航"></nav>
+      </div>
+    </header>
+
+    <main id="view" tabindex="-1"></main>
+
+    <footer class="footer">
+      <div class="wrap footer__grid">
+        <p>
+          <strong>像素宠舍</strong> · 一个本地运行的小站，宠物住在你自己硬盘上的 data/petshed.json 里。
+        </p>
+        <p class="mono">
+          画布 32 / 64 / 128 · 每日口粮 ×1 · 对话可接任意 OpenAI 兼容接口 · 断网时用本地小脑袋
+        </p>
+      </div>
+    </footer>
+
+    <div class="toasts" id="toasts" aria-live="polite"></div>
+    <script type="module" src="/js/main.js"></script>
+  </body>
+</html>
