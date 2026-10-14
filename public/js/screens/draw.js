@@ -1,6 +1,7 @@
 import { h, clear, toast } from '../dom.js';
 import { api } from '../api.js';
 import { createEditor } from '../editor.js';
+import { createImportPanel } from '../importer.js';
 import { PET_SIZES, FOOD_SIZES, blankSprite, resizeTo, toStored, fromStored } from '../sprite.js';
 import { PRESETS, FOOD_PRESETS } from '../presets.js';
 
@@ -40,6 +41,15 @@ export function drawScreen({ store, navigate, params }) {
 
   const sizeRow = h('div', { class: 'sizer' });
 
+  const importPanel = createImportPanel({
+    getTargetSize: () => editor.getSprite().size,
+    onApply: (sprite) => {
+      editor.setSprite(sprite);
+      dirty();
+    },
+    onNotice: (text) => toast(text, 'ok'),
+  });
+
   function renderSizes() {
     clear(sizeRow);
     for (const option of sizes) {
@@ -56,6 +66,7 @@ export function drawScreen({ store, navigate, params }) {
               const next = resizeTo(working, option);
               editor.setSprite(next);
               renderSizes();
+              importPanel.refresh(); // 画布尺寸变了，转出来的图也要跟着重算
             },
           },
           `${option}×${option}`,
@@ -115,6 +126,7 @@ export function drawScreen({ store, navigate, params }) {
         h('div', { class: 'draw__field' }, h('p', { class: 'label mono' }, '保存'), saveBtn, dirtyNote),
       ),
       editor.el,
+      importPanel.el,
       h(
         'p',
         { class: 'tiny faint draw__foot' },
