@@ -44,8 +44,10 @@ class Db {
   constructor(file, { log = console } = {}) {
     this.file = file;
     this.log = log;
+    this.kind = 'file';
     this.data = emptyDb();
     this._chain = Promise.resolve();
+    this._loadedOnce = false;
   }
 
   async load() {
@@ -70,10 +72,13 @@ class Db {
       }
     }
     this.pruneSessions();
+    this._loadedOnce = true;
     return this.data;
   }
 
   async sync() {
+    // 第一次进来时把文件读出来（本机 server.js 启动时已经 load 过，这里就是空操作）
+    if (!this._loadedOnce) return this.load();
     return this.data;
   }
 
@@ -92,6 +97,15 @@ class Db {
 
   pruneSessions(now = Date.now()) {
     return pruneSessions(this.data, now);
+  }
+
+  /** 自检：这个目录到底写不写得进去 */
+  async probe() {
+    await fsp.mkdir(path.dirname(this.file), { recursive: true });
+    const probeFile = `${this.file}.probe`;
+    await fsp.writeFile(probeFile, 'ok', 'utf8');
+    await fsp.rm(probeFile, { force: true });
+    return 'writable';
   }
 
   async _persist() {
@@ -122,6 +136,7 @@ class UpstashStore {
     this.key = key;
     this.verKey = `${key}:ver`;
     this.log = log;
+    this.kind = 'redis';
     this.fetch = fetchImpl || globalThis.fetch;
     this.data = emptyDb();
     this._ver = null;
@@ -213,6 +228,50 @@ class UpstashStore {
   pruneSessions(now = Date.now()) {
     return pruneSessions(this.data, now);
   }
+
+  /** 自检：这条 Redis 通道通不通（顺带验证 token 对不对） */
+  async probe() {
+    const pong = await this._cmd(['PING']);
+    return pong === null || pong === undefined ? 'ping(空响应)' : String(pong);
+  }
+}
+
+/**
+ * 在 Vercel 这类只读文件系统上又没配 Redis 时的占位实现。
+ * 不假装能工作，而是把「到底缺什么」说清楚，一路带到页面上的报错框里。
+ */
+class NotConfiguredStore {
+  constructor({ log = console, reason = '' } = {}) {
+    this.log = log;
+    this.kind = 'none';
+    this.data = emptyDb();
+    this.reason = reason;
+  }
+
+  get message() {
+    if (this.reason) return this.reason;
+    return '没有配置 Redis 存储。Vercel 的部署目录是只读的，写不了文件，请先在 Marketplace 装 Upstash Redis 并设置 UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN，然后重新部署（加完环境变量必须 redeploy 才生效）。';
+  }
+
+  async load() {
+    throw new Error(this.message);
+  }
+
+  async sync() {
+    throw new Error(this.message);
+  }
+
+  async mutate() {
+    throw new Error(this.message);
+  }
+
+  async probe() {
+    throw new Error(this.message);
+  }
+
+  pruneSessions() {
+    return 0;
+  }
 }
 
 /* ------------------------------- 该用哪一套 ------------------------------- */
@@ -239,8 +298,14 @@ function createStore({ file, log = console, env = process.env } = {}) {
     log.log('[db] 使用 Redis 存储（适用于 Vercel 等无状态环境）');
     return new UpstashStore({ url, token, key: env.PET_STORE_KEY || 'petshed:db', log });
   }
+  // 部署在 Vercel 这类只读环境里却没用 Redis：不要退回文件存储去撞墙，直接如实报错
+  const readonlyHost = Boolean(env.VERCEL || env.VERCEL_ENV || env.AWS_LAMBDA_FUNCTION_NAME);
+  if (readonlyHost && forced !== 'file') {
+    log.error('[db] 检测到 Serverless 环境但没有 Redis 配置，已切换到「未配置」状态');
+    return new NotConfiguredStore({ log });
+  }
   log.log(`[db] 使用本地文件存储：${file}`);
   return new Db(file, { log });
 }
 
-module.exports = { Db, UpstashStore, createStore, emptyDb, normalizeDb, pruneSessions, CAS_SCRIPT };
+module.exports = { Db, UpstashStore, NotConfiguredStore, createStore, emptyDb, normalizeDb, pruneSessions, CAS_SCRIPT };

@@ -11,24 +11,26 @@
 const path = require('node:path');
 const http = require('./http');
 const api = require('./api');
-const { createStore } = require('./db');
+const { createStore, NotConfiguredStore } = require('./db');
 
 let storePromise = null;
 
 function getStore() {
   if (!storePromise) {
-    storePromise = (async () => {
-      const store = createStore({
-        // 兜底路径：只有在既没配 Redis 又真的可写时才会用到
-        file: path.join(__dirname, '..', 'data', 'petshed.json'),
-        log: console,
-        env: process.env,
-      });
-      await store.load();
-      return store;
-    })().catch((err) => {
-      storePromise = null;
-      throw err;
+    storePromise = Promise.resolve().then(() => {
+      try {
+        // 注意：这里不 await load()。存储没配好也要让请求走到路由里，
+        // 这样 /api/status 才能如实汇报「到底缺什么」，而不是一律 500。
+        return createStore({
+          // 兜底路径：只有在既没配 Redis 又真的可写时才会用到
+          file: path.join(__dirname, '..', 'data', 'petshed.json'),
+          log: console,
+          env: process.env,
+        });
+      } catch (err) {
+        console.error('[db] 存储配置有误：', err && err.message);
+        return new NotConfiguredStore({ log: console, reason: String((err && err.message) || err) });
+      }
     });
   }
   return storePromise;
@@ -61,7 +63,12 @@ function makeHandler(apiPath) {
 
     try {
       const store = await getStore();
-      await store.sync();
+      try {
+        await store.sync();
+      } catch (err) {
+        // 存储不可用时也把请求交给路由：这样 /api/status 还能如实汇报出了什么事
+        console.error('[db] 同步失败：', err && err.message);
+      }
       await api.handle({
         req,
         res,
@@ -74,12 +81,18 @@ function makeHandler(apiPath) {
     } catch (err) {
       console.error('[api] 处理出错', req.method, pathname, err);
       if (!res.headersSent) {
-        const storage = /存储服务|Redis|fetch failed|ENOTFOUND|EAI_AGAIN/i.test(String(err && err.message));
-        http.sendJson(res, storage ? 503 : 500, {
-          error: storage
-            ? '连不上数据库，检查 UPSTASH_REDIS_REST_URL / TOKEN 是否配好。'
-            : '服务器出了点问题，稍后再试。',
-        });
+        const detail = String((err && err.message) || err);
+        const misconfigured = /没有配置 Redis/.test(detail);
+        const readonlyFs = /EACCES|EPERM|EROFS|read-only file system/i.test(detail);
+        const unreachable = /存储服务|Redis|fetch failed|ENOTFOUND|EAI_AGAIN|ETIMEDOUT|UND_ERR/i.test(detail);
+        if (misconfigured || readonlyFs) {
+          // 把真实原因直接说出来，免得页面只显示「服务器出了点问题」
+          http.sendJson(res, 503, { error: detail.slice(0, 300) });
+        } else if (unreachable) {
+          http.sendJson(res, 503, { error: `连不上数据库：${detail.slice(0, 240)}` });
+        } else {
+          http.sendJson(res, 500, { error: '服务器出了点问题，稍后再试。' });
+        }
       } else {
         res.end();
       }

@@ -218,6 +218,18 @@ function stateView(user, now = Date.now()) {
   };
 }
 
+/** 给 /api/status 用的存储自检：把「数据存在哪、通不通」直接说出来 */
+async function describeStorage(store) {
+  const info = { kind: store && store.kind ? store.kind : 'unknown', ok: true, error: null };
+  try {
+    info.detail = await store.probe();
+  } catch (err) {
+    info.ok = false;
+    info.error = String((err && err.message) || err).slice(0, 240);
+  }
+  return info;
+}
+
 /* ------------------------------- 限流 ------------------------------- */
 
 const buckets = new Map();
@@ -359,7 +371,12 @@ async function handle(ctx) {
   }
 
   if (route === 'GET /api/status') {
-    return json(res, 200, { ok: true, ai: ai.status(), today: todayInChina(now) });
+    return json(res, 200, {
+      ok: true,
+      ai: ai.status(),
+      today: todayInChina(now),
+      storage: await describeStorage(store),
+    });
   }
 
   if (route === 'GET /api/state') {

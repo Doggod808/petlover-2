@@ -177,6 +177,7 @@ async function startMockRedis() {
         keys.set(args[0], String(value));
         return respond({ result: value });
       }
+      if (op === 'PING') return respond({ result: 'PONG' });
       if (op === 'EVAL') {
         const script = args[0];
         if (script !== CAS_SCRIPT) {
@@ -260,6 +261,11 @@ async function runSuite({ name, base, rawJson, extra }) {
   const status = await new Client(base).call('GET', '/api/status');
   check('状态接口可用', status.status === 200 && status.data.ok === true);
   check('离线模式被识别', status.data.ai.offline === true);
+  check(
+    '状态接口会自报存储类型且自检通过',
+    Boolean(status.data.storage) && status.data.storage.ok === true,
+    JSON.stringify(status.data.storage || null).slice(0, 200),
+  );
 
   console.log('\n[2] 注册与登录');
   const shortPwd = await a.call('POST', '/api/auth/register', { username: 'tester', password: '123' });
@@ -461,6 +467,50 @@ try {
 
   const noStore = await invoke(stateHandler, { url: '/api/state' });
   check('函数入口同样拦住未登录', noStore.status === 401);
+
+  /* ---------- 第四轮：Vercel 上忘了配 Redis 会怎样 ---------- */
+  currentSuite = '存储未配置时的自诊断';
+  console.log('\n========== 第四轮：Vercel 上没配 Redis 会怎样 ==========');
+  const savedEnv = {
+    VERCEL: process.env.VERCEL,
+    PET_STORE: process.env.PET_STORE,
+    UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
+    UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
+  };
+  process.env.VERCEL = '1';
+  delete process.env.PET_STORE;
+  delete process.env.UPSTASH_REDIS_REST_URL;
+  delete process.env.UPSTASH_REDIS_REST_TOKEN;
+  delete require.cache[require.resolve('../src/vercel.js')];
+  const bareStatus = require('../src/vercel.js').makeHandler('/api/status');
+  const bareStatusRes = await invoke(bareStatus, { url: '/api/status' });
+  check(
+    '/api/status 仍返回 200，并说清存储没配',
+    bareStatusRes.status === 200 &&
+      bareStatusRes.json.storage.kind === 'none' &&
+      /没有配置 Redis/.test(bareStatusRes.json.storage.error || ''),
+    JSON.stringify(bareStatusRes.json).slice(0, 260),
+  );
+  delete require.cache[require.resolve('../src/vercel.js')];
+  const bareAuth = require('../src/vercel.js').makeHandler('/api/auth');
+  const bareReg = await invoke(bareAuth, {
+    method: 'POST',
+    url: '/api/auth?action=register',
+    body: { username: 'should_fail', password: 'whatever123' },
+  });
+  check(
+    '注册返回 503，并把真实原因带到前端（不再是一句笼统的 500）',
+    bareReg.status === 503 && /没有配置 Redis/.test(bareReg.json.error || ''),
+    JSON.stringify(bareReg.json).slice(0, 260),
+  );
+  if (savedEnv.VERCEL === undefined) delete process.env.VERCEL;
+  else process.env.VERCEL = savedEnv.VERCEL;
+  if (savedEnv.PET_STORE === undefined) delete process.env.PET_STORE;
+  else process.env.PET_STORE = savedEnv.PET_STORE;
+  if (savedEnv.UPSTASH_REDIS_REST_URL === undefined) delete process.env.UPSTASH_REDIS_REST_URL;
+  else process.env.UPSTASH_REDIS_REST_URL = savedEnv.UPSTASH_REDIS_REST_URL;
+  if (savedEnv.UPSTASH_REDIS_REST_TOKEN === undefined) delete process.env.UPSTASH_REDIS_REST_TOKEN;
+  else process.env.UPSTASH_REDIS_REST_TOKEN = savedEnv.UPSTASH_REDIS_REST_TOKEN;
 } catch (err) {
   currentSuite = currentSuite || '启动';
   fail += 1;
